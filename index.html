@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Full Stack .NET Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --black: #000000;
+    --white: #FFFFFF;
+    --gray-950: #0A0A0C;
+    --gray-900: #111113;
+    --gray-700: #38383C;
+    --gray-500: #8E8E93;
+    --gray-300: #D1D1D6;
+    --gray-100: #F5F5F7;
+    --blue: #0A84FF;
+    --blue-soft: rgba(10,132,255,0.12);
+    --sans: 'Inter', -apple-system, sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    font-family:var(--sans); background:var(--black); color:var(--white);
+    -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  }
+  a{ color:inherit; text-decoration:none; }
+  ::selection{ background:var(--blue); color:var(--white); }
+  a:focus-visible, button:focus-visible{ outline:2px solid var(--blue); outline-offset:3px; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important; }
+    .reveal{ opacity:1 !important; transform:none !important; }
+  }
+
+  .wrap{ max-width:1100px; margin:0 auto; padding:0 32px; }
+  @media (max-width:780px){ .wrap{ padding:0 20px; } }
+
+  /* ---------- reveal-on-scroll base ---------- */
+  .reveal{
+    opacity:0; transform:translateY(36px);
+    transition:opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1);
+  }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+  .reveal-delay-1{ transition-delay:0.08s; }
+  .reveal-delay-2{ transition-delay:0.16s; }
+  .reveal-delay-3{ transition-delay:0.24s; }
+  .reveal-delay-4{ transition-delay:0.32s; }
+  .reveal-delay-5{ transition-delay:0.40s; }
+
+  /* ---------- nav ---------- */
+  .topbar{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    background:rgba(0,0,0,0.7); backdrop-filter:blur(20px) saturate(180%);
+    border-bottom:1px solid rgba(255,255,255,0.08);
+  }
+  .topnav{ display:flex; justify-content:space-between; align-items:center; padding:14px 32px; max-width:1100px; margin:0 auto; }
+  .logo{ font-weight:700; font-size:14px; letter-spacing:-0.01em; }
+  .navlinks{ display:flex; gap:36px; font-size:12.5px; color:var(--gray-300); }
+  .navlinks a{ transition:color .2s; }
+  .navlinks a:hover{ color:var(--white); }
+  @media (max-width:780px){ .navlinks{ display:none; } }
+
+  /* ---------- hero ---------- */
+  .hero{
+    min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:140px 32px 80px; position:relative;
+  }
+  .hero-glow{
+    position:absolute; top:18%; left:50%; transform:translateX(-50%);
+    width:900px; height:500px; border-radius:50%;
+    background:radial-gradient(ellipse, rgba(10,132,255,0.18) 0%, rgba(10,132,255,0) 70%);
+    pointer-events:none; z-index:0;
+  }
+  .hero-kicker{
+    font-size:14px; font-weight:600; color:var(--blue); letter-spacing:0.02em;
+    margin-bottom:20px; position:relative; z-index:1;
+  }
+  .hero h1{
+    font-size:clamp(44px,8vw,104px); font-weight:800; letter-spacing:-0.03em;
+    line-height:1.02; position:relative; z-index:1; max-width:1000px;
+  }
+  .hero h1 .blue{ color:var(--blue); }
+  .hero-sub{
+    font-size:clamp(18px,2vw,24px); color:var(--gray-500); font-weight:500;
+    margin-top:26px; max-width:640px; position:relative; z-index:1; line-height:1.5;
+  }
+  .hero-cta{ display:flex; gap:18px; margin-top:42px; position:relative; z-index:1; flex-wrap:wrap; justify-content:center; }
+  .btn{
+    font-size:16px; font-weight:500; padding:14px 28px; border-radius:980px;
+    transition:transform .2s, opacity .2s; display:inline-flex; align-items:center; gap:6px;
+  }
+  .btn-primary{ background:var(--blue); color:var(--white); }
+  .btn-primary:hover{ transform:scale(1.03); }
+  .btn-ghost{ color:var(--blue); }
+  .btn-ghost:hover{ text-decoration:underline; }
+
+  .hero-scroll-cue{
+    position:absolute; bottom:36px; left:50%; transform:translateX(-50%);
+    font-size:11px; color:var(--gray-500); display:flex; flex-direction:column; align-items:center; gap:8px;
+    animation:bob 2.2s ease-in-out infinite;
+  }
+  @keyframes bob{ 0%,100%{ transform:translate(-50%,0); } 50%{ transform:translate(-50%,6px); } }
+  .hero-scroll-cue .line{ width:1px; height:28px; background:linear-gradient(var(--gray-500), transparent); }
+
+  /* ---------- counters strip ---------- */
+  .counters{
+    display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid rgba(255,255,255,0.08);
+    border-bottom:1px solid rgba(255,255,255,0.08);
+  }
+  .counter{ padding:48px 24px; text-align:center; border-right:1px solid rgba(255,255,255,0.08); }
+  .counter:last-child{ border-right:none; }
+  .counter .num{ font-size:clamp(32px,4vw,52px); font-weight:800; letter-spacing:-0.02em; }
+  .counter .lbl{ font-size:13px; color:var(--gray-500); margin-top:8px; }
+  @media (max-width:780px){ .counters{ grid-template-columns:repeat(2,1fr); } .counter{ border-bottom:1px solid rgba(255,255,255,0.08); } }
+
+  /* ---------- section scaffolding ---------- */
+  section{ padding:160px 0; position:relative; }
+  .section-white{ background:var(--white); color:var(--black); }
+  .section-gray{ background:var(--gray-950); }
+  @media (max-width:780px){ section{ padding:100px 0; } }
+
+  .eyebrow{
+    font-size:14px; font-weight:600; color:var(--blue); margin-bottom:18px; text-align:center;
+  }
+  .sec-title{
+    font-size:clamp(34px,5vw,64px); font-weight:800; letter-spacing:-0.025em; text-align:center;
+    line-height:1.08; max-width:780px; margin:0 auto;
+  }
+  .sec-sub{
+    font-size:19px; color:var(--gray-500); text-align:center; max-width:600px; margin:22px auto 0; line-height:1.55;
+  }
+  .section-white .sec-sub{ color:#6E6E73; }
+
+  /* ---------- live flow diagram (about) ---------- */
+  .flow-stage{
+    margin-top:80px; border-radius:24px; background:var(--gray-900); border:1px solid rgba(255,255,255,0.08);
+    padding:56px 40px; position:relative; overflow:hidden;
+  }
+  .flow-row{ display:flex; align-items:center; justify-content:space-between; gap:8px; max-width:760px; margin:0 auto; position:relative; }
+  .flow-node{
+    display:flex; flex-direction:column; align-items:center; gap:10px; flex-shrink:0; position:relative; z-index:2;
+  }
+  .flow-node .box{
+    width:64px; height:64px; border-radius:16px; background:var(--gray-900); border:1.5px solid rgba(255,255,255,0.15);
+    display:flex; align-items:center; justify-content:center; font-size:22px;
+  }
+  .flow-node.active .box{ border-color:var(--blue); box-shadow:0 0 0 4px var(--blue-soft); }
+  .flow-node .lbl{ font-size:12px; color:var(--gray-500); font-weight:500; }
+  .flow-line{ flex:1; height:1.5px; background:rgba(255,255,255,0.15); position:relative; overflow:hidden; min-width:30px; }
+  .flow-line .packet{
+    position:absolute; top:50%; left:-10px; width:10px; height:10px; margin-top:-5px;
+    border-radius:50%; background:var(--blue); box-shadow:0 0 10px var(--blue);
+    animation:travel 2.4s linear infinite;
+  }
+  .flow-line:nth-child(2) .packet{ animation-delay:0s; }
+  .flow-line:nth-child(4) .packet{ animation-delay:0.6s; }
+  .flow-line:nth-child(6) .packet{ animation-delay:1.2s; }
+  @keyframes travel{ 0%{ left:-10px; opacity:0; } 10%{ opacity:1; } 90%{ opacity:1; } 100%{ left:100%; opacity:0; } }
+  @media (max-width:680px){ .flow-row{ flex-wrap:wrap; justify-content:center; } .flow-line{ display:none; } }
+
+  .flow-caption{ text-align:center; font-size:13px; color:var(--gray-500); margin-top:36px; font-family:var(--mono); }
+
+  /* ---------- terminal block ---------- */
+  .terminal{
+    margin-top:60px; max-width:700px; margin-left:auto; margin-right:auto;
+    border-radius:16px; background:#0d0d10; border:1px solid rgba(255,255,255,0.1);
+    overflow:hidden;
+  }
+  .terminal-head{
+    display:flex; align-items:center; gap:7px; padding:13px 16px; border-bottom:1px solid rgba(255,255,255,0.08);
+  }
+  .terminal-dot{ width:10px; height:10px; border-radius:50%; }
+  .terminal-body{
+    padding:22px 20px; font-family:var(--mono); font-size:13px; line-height:1.9; color:var(--gray-300);
+    min-height:140px;
+  }
+  .terminal-body .ok{ color:#30D158; }
+  .terminal-body .warn{ color:#FF9F0A; }
+  .terminal-body .blue{ color:var(--blue); }
+  .terminal-cursor{ display:inline-block; width:7px; height:14px; background:var(--blue); margin-left:2px; vertical-align:-2px; animation:cursorblink 1s step-end infinite; }
+  @keyframes cursorblink{ 0%,100%{ opacity:1; } 50%{ opacity:0; } }
+
+  /* ---------- experience (white section) ---------- */
+  .exp-item{
+    border-bottom:1px solid rgba(0,0,0,0.1); padding:56px 0;
+  }
+  .exp-item:first-of-type{ border-top:1px solid rgba(0,0,0,0.1); }
+  .exp-top{ display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:16px; margin-bottom:18px; }
+  .exp-co{ font-size:clamp(28px,4vw,44px); font-weight:800; letter-spacing:-0.02em; }
+  .exp-period{ font-size:14px; color:#6E6E73; font-weight:500; }
+  .exp-role{ font-size:17px; color:var(--blue); font-weight:600; margin-bottom:6px; }
+  .exp-domain{ font-size:14px; color:#6E6E73; margin-bottom:28px; }
+  .exp-summary{ font-size:18px; color:#1d1d1f; max-width:760px; line-height:1.6; margin-bottom:28px; }
+  .exp-summary strong{ font-weight:700; }
+
+  .pillgrid{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:28px; }
+  .pill{ font-size:13px; font-weight:500; color:#1d1d1f; background:var(--gray-100); padding:7px 14px; border-radius:980px; }
+
+  .exp-points{ display:grid; gap:14px; max-width:760px; }
+  .exp-point{ display:flex; gap:14px; font-size:15.5px; color:#1d1d1f; line-height:1.6; }
+  .exp-point .ico{ color:var(--blue); flex-shrink:0; font-weight:700; }
+  .exp-point strong{ font-weight:700; }
+
+  .exp-toggle{
+    margin-top:24px; background:none; border:none; cursor:pointer; color:var(--blue);
+    font-size:14px; font-weight:600; display:flex; align-items:center; gap:6px;
+  }
+  .exp-toggle .chev{ transition:transform .2s; display:inline-block; }
+  .exp-toggle.open .chev{ transform:rotate(90deg); }
+  .exp-extra{ display:none; margin-top:18px; max-width:760px; }
+  .exp-extra.open{ display:block; }
+
+  /* ---------- stack (dark) ---------- */
+  .stack-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:rgba(255,255,255,0.08); border-radius:24px; overflow:hidden; margin-top:64px; }
+  .stack-cat{ background:var(--gray-950); padding:32px 28px; }
+  .stack-cat-title{ font-size:13px; color:var(--blue); font-weight:600; margin-bottom:16px; }
+  .stack-items{ display:flex; flex-wrap:wrap; gap:8px; }
+  .stack-item{ font-size:13px; color:var(--gray-300); border:1px solid rgba(255,255,255,0.1); padding:6px 12px; border-radius:8px; }
+  @media (max-width:780px){ .stack-grid{ grid-template-columns:1fr; } }
+
+  /* ---------- domains (white) ---------- */
+  .domain-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-top:64px; }
+  .domain-card{
+    border-radius:24px; background:var(--gray-100); padding:36px 30px;
+    transition:transform .3s cubic-bezier(0.16,1,0.3,1);
+  }
+  .domain-card:hover{ transform:translateY(-6px); }
+  .domain-tag{ font-size:13px; color:var(--blue); font-weight:600; margin-bottom:14px; }
+  .domain-title{ font-size:21px; font-weight:700; margin-bottom:10px; letter-spacing:-0.01em; }
+  .domain-desc{ font-size:14.5px; color:#6E6E73; line-height:1.55; }
+  @media (max-width:780px){ .domain-grid{ grid-template-columns:1fr; } }
+
+  /* ---------- contact (dark, big) ---------- */
+  .contact-section{ text-align:center; }
+  .contact-title{ font-size:clamp(40px,7vw,84px); font-weight:800; letter-spacing:-0.03em; line-height:1.05; }
+  .contact-sub{ font-size:19px; color:var(--gray-500); margin-top:22px; max-width:520px; margin-left:auto; margin-right:auto; }
+  .contact-row{ display:flex; gap:18px; justify-content:center; flex-wrap:wrap; margin-top:44px; }
+
+  footer{ padding:40px 0; text-align:center; background:var(--black); border-top:1px solid rgba(255,255,255,0.08); }
+  footer p{ font-family:var(--mono); font-size:12px; color:var(--gray-500); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topnav">
+    <div class="logo">Susheel Pinnoj</div>
+    <nav class="navlinks">
+      <a href="#about">about</a>
+      <a href="#experience">experience</a>
+      <a href="#stack">stack</a>
+      <a href="#domains">domains</a>
+      <a href="#contact">contact</a>
+    </nav>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-kicker reveal">FULL STACK .NET DEVELOPER</div>
+  <h1 class="reveal reveal-delay-1">Systems that<br>just <span class="blue">keep working.</span></h1>
+  <p class="hero-sub reveal reveal-delay-2">Six plus years building and operating production platforms across retail media, gaming, and healthcare. C#. Angular. Built to stay up.</p>
+  <div class="hero-cta reveal reveal-delay-3">
+    <a href="#experience" class="btn btn-primary">View experience</a>
+    <a href="mailto:susheelp0926@gmail.com" class="btn btn-ghost">Get in touch →</a>
+  </div>
+  <div class="hero-scroll-cue"><span>SCROLL</span><span class="line"></span></div>
+</section>
+
+<!-- COUNTERS -->
+<div class="counters">
+  <div class="counter reveal"><div class="num" data-count="6" data-suffix="+">0</div><div class="lbl">years in production</div></div>
+  <div class="counter reveal reveal-delay-1"><div class="num" data-count="3" data-suffix="">0</div><div class="lbl">industries</div></div>
+  <div class="counter reveal reveal-delay-2"><div class="num" data-count="2" data-suffix="">0</div><div class="lbl">continents, one team</div></div>
+  <div class="counter reveal reveal-delay-3"><div class="num" data-text="24/7">0</div><div class="lbl">on-call discipline</div></div>
+</div>
+
+<!-- ABOUT -->
+<section id="about" class="section-gray">
+  <div class="wrap">
+    <div class="eyebrow reveal">ABOUT</div>
+    <h2 class="sec-title reveal reveal-delay-1">I build the request path —<br>then I watch it work.</h2>
+    <p class="sec-sub reveal reveal-delay-2">Client to API to database and back. Every box in this diagram is something I've built, broken, and fixed in production.</p>
+
+    <div class="flow-stage reveal reveal-delay-3">
+      <div class="flow-row">
+        <div class="flow-node"><div class="box">◧</div><div class="lbl">Angular</div></div>
+        <div class="flow-line"><div class="packet"></div></div>
+        <div class="flow-node active"><div class="box">⚙</div><div class="lbl">ASP.NET Core</div></div>
+        <div class="flow-line"><div class="packet"></div></div>
+        <div class="flow-node"><div class="box">⬡</div><div class="lbl">Kafka</div></div>
+        <div class="flow-line"><div class="packet"></div></div>
+        <div class="flow-node"><div class="box">▤</div><div class="lbl">SQL Server</div></div>
+      </div>
+      <div class="flow-caption">request → service → message bus → data layer — observed continuously</div>
+    </div>
+
+    <div class="terminal reveal reveal-delay-4">
+      <div class="terminal-head">
+        <div class="terminal-dot" style="background:#FF5F57"></div>
+        <div class="terminal-dot" style="background:#FEBC2E"></div>
+        <div class="terminal-dot" style="background:#28C840"></div>
+      </div>
+      <div class="terminal-body" id="typedTerminal"></div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience" class="section-white">
+  <div class="wrap">
+    <div class="eyebrow reveal">EXPERIENCE</div>
+    <h2 class="sec-title reveal reveal-delay-1">Where I've built things.</h2>
+    <p class="sec-sub reveal reveal-delay-2">Three roles, three industries, one consistent focus.</p>
+
+    <div style="margin-top:72px;">
+      <div class="exp-item reveal">
+        <div class="exp-top"><div class="exp-co">Criteo</div><div class="exp-period">Aug 2025 — Present</div></div>
+        <div class="exp-role">Software Engineer — Full Stack | Remote | Contract</div>
+        <div class="exp-domain">Retail Media · Commerce Advertising</div>
+        <p class="exp-summary">Building <strong>retailer pricing, configuration, and campaign management</strong> systems within Criteo's Retail Media platform — supporting global retailers running sponsored-product and commerce display advertising at scale, across distributed teams in the US and Europe.</p>
+        <div class="pillgrid">
+          <span class="pill">.NET 8/10</span><span class="pill">ASP.NET Core</span><span class="pill">Angular 17/21</span>
+          <span class="pill">TypeScript</span><span class="pill">SQL Server</span><span class="pill">Kafka</span>
+          <span class="pill">RabbitMQ</span><span class="pill">Kubernetes</span><span class="pill">Docker</span>
+          <span class="pill">Grafana</span><span class="pill">Prometheus</span><span class="pill">Kibana</span>
+        </div>
+        <div class="exp-points">
+          <div class="exp-point"><span class="ico">＋</span><span><strong>Design and build RESTful APIs</strong> in ASP.NET Core for retailer pricing, configuration, and campaign administration across an independently deployable microservices architecture.</span></div>
+          <div class="exp-point"><span class="ico">＋</span><span><strong>Develop Angular 17/21 applications</strong> — Retailer Pricing UI, Retailer Configuration UI, Retailer Tools.</span></div>
+          <div class="exp-point"><span class="ico">＋</span><span>Work within a <strong>Kafka and RabbitMQ-based messaging architecture</strong> across retailer pricing, campaign, and product domains.</span></div>
+          <div class="exp-point"><span class="ico">＋</span><span>Own <strong>production observability</strong> via Grafana, Prometheus, and Kibana — incident response and root cause analysis.</span></div>
+        </div>
+        <button class="exp-toggle" data-target="ext-criteo" data-more="More detail" data-less="Show less">
+          <span class="toggle-label">More detail</span><span class="chev">›</span>
+        </button>
+        <div class="exp-extra" id="ext-criteo">
+          <div class="exp-points">
+            <div class="exp-point"><span class="ico">＋</span><span>Optimize <strong>SQL Server</strong> queries, stored procedures, and reporting datasets supporting retailer and pricing data at scale.</span></div>
+            <div class="exp-point"><span class="ico">＋</span><span>Write unit/integration tests with <strong>xUnit and NUnit</strong>; validate API contracts using Postman and Swagger/OpenAPI.</span></div>
+            <div class="exp-point"><span class="ico">＋</span><span>Support <strong>CI/CD pipelines</strong> on Jenkins, Docker, Kubernetes, and Gradle, including canary release monitoring.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-item reveal">
+        <div class="exp-top"><div class="exp-co">Entain</div><div class="exp-period">Jan 2020 — Jul 2023</div></div>
+        <div class="exp-role">Software Engineer — .NET / Sitecore | Onsite | Full-time</div>
+        <div class="exp-domain">Gaming · Sports Betting</div>
+        <p class="exp-summary">Built and operated systems for <strong>player account management, wallet operations, and promotional campaigns</strong> on a real-money gaming platform — plus content publishing through Sitecore MVC.</p>
+        <div class="pillgrid">
+          <span class="pill">ASP.NET MVC</span><span class="pill">Web API</span><span class="pill">Angular 8/10/12</span>
+          <span class="pill">Sitecore 9.x MVC</span><span class="pill">SQL Server</span><span class="pill">SSRS</span>
+          <span class="pill">Entity Framework</span><span class="pill">Azure DevOps</span>
+        </div>
+        <div class="exp-points">
+          <div class="exp-point"><span class="ico">＋</span><span>Built <strong>wallet and transaction-processing backends</strong> — balance inquiries, deposit/withdrawal eligibility, KYC validation.</span></div>
+          <div class="exp-point"><span class="ico">＋</span><span>Developed the <strong>bonus/promotional eligibility engine</strong> — configurable rule evaluation against deposit thresholds and wagering multipliers.</span></div>
+          <div class="exp-point"><span class="ico">＋</span><span>Built <strong>Sitecore 9.x MVC components</strong> — templates, renderings, layouts for marketing-driven content.</span></div>
+          <div class="exp-point"><span class="ico">＋</span><span>Active in <strong>Sev-2/Sev-3 incident response</strong> for business-critical wallet and account systems.</span></div>
+        </div>
+        <button class="exp-toggle" data-target="ext-entain" data-more="More detail" data-less="Show less">
+          <span class="toggle-label">More detail</span><span class="chev">›</span>
+        </button>
+        <div class="exp-extra" id="ext-entain">
+          <div class="exp-points">
+            <div class="exp-point"><span class="ico">＋</span><span>Wrote <strong>SQL Server</strong> stored procedures and views supporting player, wallet, and promotion data; tuned queries for high transaction-volume tables.</span></div>
+            <div class="exp-point"><span class="ico">＋</span><span>Built <strong>SSRS</strong> reporting for finance and marketing stakeholders.</span></div>
+            <div class="exp-point"><span class="ico">＋</span><span>Supported releases via <strong>Git/GitFlow, Azure DevOps, and Jenkins</strong>.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-item reveal">
+        <div class="exp-top"><div class="exp-co">Wipro</div><div class="exp-period">Jul 2017 — Nov 2019</div></div>
+        <div class="exp-role">Associate Software Developer | Onsite | Full-time</div>
+        <div class="exp-domain">Healthcare · Insurance</div>
+        <p class="exp-summary">Started my engineering career on <strong>member management, claims processing, and provider administration</strong> systems — foundational ASP.NET MVC, SQL Server, and SSRS work.</p>
+        <div class="pillgrid">
+          <span class="pill">C#</span><span class="pill">ASP.NET MVC</span><span class="pill">Entity Framework</span>
+          <span class="pill">SQL Server</span><span class="pill">SSIS</span><span class="pill">SSRS</span>
+        </div>
+        <div class="exp-points">
+          <div class="exp-point"><span class="ico">＋</span><span>Built features across <strong>member management, claims administration, and provider operations</strong>.</span></div>
+          <div class="exp-point"><span class="ico">＋</span><span>Wrote <strong>SQL Server</strong> stored procedures and validation queries; supported batch eligibility-file processing.</span></div>
+          <div class="exp-point"><span class="ico">＋</span><span>Developed <strong>SSRS reports</strong> for operations and compliance stakeholders.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STACK -->
+<section id="stack" class="section-gray">
+  <div class="wrap">
+    <div class="eyebrow reveal">STACK</div>
+    <h2 class="sec-title reveal reveal-delay-1">What I build with.</h2>
+    <div class="stack-grid reveal reveal-delay-2">
+      <div class="stack-cat">
+        <div class="stack-cat-title">Backend</div>
+        <div class="stack-items">
+          <span class="stack-item">C#</span><span class="stack-item">.NET 8/10</span><span class="stack-item">ASP.NET Core</span>
+          <span class="stack-item">ASP.NET MVC</span><span class="stack-item">Entity Framework</span><span class="stack-item">Sitecore MVC</span>
+        </div>
+      </div>
+      <div class="stack-cat">
+        <div class="stack-cat-title">Frontend</div>
+        <div class="stack-items">
+          <span class="stack-item">Angular 8–21</span><span class="stack-item">TypeScript</span><span class="stack-item">JavaScript</span>
+          <span class="stack-item">HTML5/CSS3</span><span class="stack-item">Bootstrap</span>
+        </div>
+      </div>
+      <div class="stack-cat">
+        <div class="stack-cat-title">Data</div>
+        <div class="stack-items">
+          <span class="stack-item">SQL Server</span><span class="stack-item">T-SQL</span><span class="stack-item">SSRS</span><span class="stack-item">SSIS</span>
+        </div>
+      </div>
+      <div class="stack-cat">
+        <div class="stack-cat-title">Messaging &amp; infra</div>
+        <div class="stack-items">
+          <span class="stack-item">Kafka</span><span class="stack-item">RabbitMQ</span><span class="stack-item">Kubernetes</span><span class="stack-item">Docker</span><span class="stack-item">Azure</span>
+        </div>
+      </div>
+      <div class="stack-cat">
+        <div class="stack-cat-title">Observability</div>
+        <div class="stack-items">
+          <span class="stack-item">Grafana</span><span class="stack-item">Prometheus</span><span class="stack-item">Kibana</span>
+        </div>
+      </div>
+      <div class="stack-cat">
+        <div class="stack-cat-title">CI/CD &amp; testing</div>
+        <div class="stack-items">
+          <span class="stack-item">Jenkins</span><span class="stack-item">Git</span><span class="stack-item">Azure DevOps</span><span class="stack-item">xUnit</span><span class="stack-item">NUnit</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DOMAINS -->
+<section id="domains" class="section-white">
+  <div class="wrap">
+    <div class="eyebrow reveal">DOMAINS</div>
+    <h2 class="sec-title reveal reveal-delay-1">Industries I understand,<br>not just code I've written.</h2>
+    <div class="domain-grid">
+      <div class="domain-card reveal reveal-delay-1">
+        <div class="domain-tag">ADTECH</div>
+        <div class="domain-title">Retail Media &amp; Commerce Advertising</div>
+        <div class="domain-desc">Retailer pricing, campaign administration, sponsored products, and auction systems at global scale.</div>
+      </div>
+      <div class="domain-card reveal reveal-delay-2">
+        <div class="domain-tag">GAMING</div>
+        <div class="domain-title">Sports Betting &amp; iGaming</div>
+        <div class="domain-desc">Real-money wallet operations, KYC/responsible-gambling rules, and promotional bonus engines.</div>
+      </div>
+      <div class="domain-card reveal reveal-delay-3">
+        <div class="domain-tag">HEALTHCARE</div>
+        <div class="domain-title">Member &amp; Claims Administration</div>
+        <div class="domain-desc">Member management, claims processing, and provider administration in a regulated, audit-heavy environment.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="contact-section">
+  <div class="wrap">
+    <div class="contact-title reveal">Let's build<br>something that lasts.</div>
+    <p class="contact-sub reveal reveal-delay-1">Open to Full Stack / .NET / Software Engineer roles. Happy to walk through any of the systems above in more depth.</p>
+    <div class="contact-row reveal reveal-delay-2">
+      <a href="mailto:susheelp0926@gmail.com" class="btn btn-primary">susheelp0926@gmail.com</a>
+      <a href="https://linkedin.com/in/susheelsitecre/" class="btn btn-ghost">LinkedIn →</a>
+      <a href="https://github.com/Pinnoj" class="btn btn-ghost">GitHub →</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>// built with care, debugged in production — last deployed 2026</p>
+</footer>
+
+<script>
+  // scroll reveal
+  var revealEls = document.querySelectorAll('.reveal');
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.15 });
+  revealEls.forEach(function(el){ io.observe(el); });
+
+  // animated counters
+  var counters = document.querySelectorAll('.num[data-count]');
+  var counted = new WeakSet();
+  var cio = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting && !counted.has(e.target)){
+        counted.add(e.target);
+        var target = parseInt(e.target.dataset.count, 10);
+        var suffix = e.target.dataset.suffix || '';
+        var dur = 1200, start = null;
+        function step(ts){
+          if(!start) start = ts;
+          var p = Math.min((ts - start) / dur, 1);
+          var val = Math.round(target * (1 - Math.pow(1 - p, 3)));
+          e.target.textContent = val + suffix;
+          if(p < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      }
+    });
+  }, { threshold: 0.5 });
+  counters.forEach(function(el){ cio.observe(el); });
+
+  // 24/7 static text counter
+  document.querySelectorAll('.num[data-text]').forEach(function(el){
+    var io2 = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){ el.textContent = el.dataset.text; io2.unobserve(el); }
+      });
+    }, { threshold: 0.5 });
+    io2.observe(el);
+  });
+
+  // typed terminal
+  var terminalLines = [
+    { html: '<span class="blue">$</span> tail -f /var/log/criteo/pricing-api.log', pause: 500 },
+    { html: '<span class="ok">[OK]</span> retailer-pricing-svc — request handled in 42ms', pause: 350 },
+    { html: '<span class="ok">[OK]</span> kafka consumer lag: 0ms — campaign-events', pause: 350 },
+    { html: '<span class="warn">[WARN]</span> p99 latency 312ms — investigating', pause: 450 },
+    { html: '<span class="blue">$</span> kubectl rollout status deploy/pricing-api', pause: 500 },
+    { html: '<span class="ok">deployment "pricing-api" successfully rolled out</span>', pause: 0 }
+  ];
+  var termEl = document.getElementById('typedTerminal');
+  var termTriggered = false;
+  var tio = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting && !termTriggered){
+        termTriggered = true;
+        typeLines(0);
+      }
+    });
+  }, { threshold: 0.4 });
+  if(termEl) tio.observe(termEl);
+
+  function typeLines(idx){
+    if(idx >= terminalLines.length) return;
+    var line = terminalLines[idx];
+    var div = document.createElement('div');
+    termEl.appendChild(div);
+    typeChars(div, line.html, 0, function(){
+      setTimeout(function(){ typeLines(idx + 1); }, line.pause);
+    });
+  }
+  function typeChars(el, html, i, done){
+    var plain = html.replace(/<[^>]+>/g, '');
+    if(i === 0){ el.innerHTML = ''; }
+    if(i < plain.length){
+      var ratio = (i + 1) / plain.length;
+      var cut = Math.round(html.length * ratio);
+      el.innerHTML = html.slice(0, cut) + '<span class="terminal-cursor"></span>';
+      setTimeout(function(){ typeChars(el, html, i + 1, done); }, 14);
+    } else {
+      el.innerHTML = html;
+      done();
+    }
+  }
+
+  // toggles
+  document.querySelectorAll('.exp-toggle').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var target = document.getElementById(btn.dataset.target);
+      var isOpen = target.classList.toggle('open');
+      btn.classList.toggle('open', isOpen);
+      var label = btn.querySelector('.toggle-label');
+      label.textContent = isOpen ? btn.dataset.less : btn.dataset.more;
+    });
+  });
+</script>
+
+</body>
+</html>
